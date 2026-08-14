@@ -1,195 +1,136 @@
-\# Network Traffic Analysis Findings
+# Findings
 
+## Overview
 
+This project analyzed live network traffic captured with Wireshark to better understand how common networking protocols communicate during normal web browsing. The analysis focused on DNS, TCP, and TLS traffic generated while visiting websites.
 
-\## Project Summary
+---
 
+# DNS Analysis
 
+### Objective
 
-This project involved capturing and analyzing live network traffic using Wireshark. The objective was to identify common protocols used during normal web browsing and understand how devices establish secure network connections.
+Identify how a domain name is translated into an IP address.
 
+### Observation
 
+A DNS query was captured requesting the IPv4 address for **www.google.com**.
 
-\---
+The response contained multiple A records, each pointing to a different Google IP address.
 
+### Explanation
 
+DNS (Domain Name System) is responsible for converting human-readable domain names into IP addresses that computers use for communication.
 
-\## Environment
+Google returned several IP addresses because it uses load balancing and distributed infrastructure to improve performance and availability.
 
+### Evidence
 
+- DNS Standard Query
+- Query Name: www.google.com
+- DNS Response
+- Multiple IPv4 (A) Records Returned
 
-\- Operating System: Windows 11
+---
 
-\- Tool: Wireshark 4.x
+# TCP Analysis
 
-\- Capture Driver: Npcap
+### Objective
 
-\- Network Type: Home Wi-Fi
+Observe the beginning of a TCP connection.
 
+### Observation
 
+A TCP SYN packet was captured from the client to the destination server.
 
-\---
+### Explanation
 
+The SYN packet is the first step of the TCP three-way handshake.
 
+This handshake establishes a reliable connection before application data is exchanged.
 
-\# Finding 1: DNS Query
+The normal sequence is:
 
+1. SYN
+2. SYN-ACK
+3. ACK
 
+Once complete, the client and server can begin transmitting data reliably.
 
-\*\*Protocol:\*\* DNS
+### Evidence
 
+- TCP SYN Flag Set
+- Destination Port: 443 (HTTPS)
+- Source Port: Ephemeral Client Port
 
+---
 
-A DNS query was captured while accessing `www.google.com`. This packet shows the client requesting the IP address associated with the domain name.
+# TLS Analysis
 
+### Objective
 
+Examine the start of an encrypted HTTPS session.
 
-\*\*Why it matters\*\*
+### Observation
 
+A TLS Client Hello packet was captured immediately after the TCP connection was established.
 
+### Explanation
 
-DNS is responsible for translating domain names into IP addresses so devices can locate services on a network.
+The Client Hello begins the TLS handshake by advertising:
 
+- Supported TLS versions
+- Supported cipher suites
+- Random session value
+- Server Name Indication (SNI)
+- Additional TLS extensions
 
+The server uses this information to negotiate encryption settings before secure communication begins.
 
-\---
+After the handshake completes, application data becomes encrypted and is no longer readable in plaintext.
 
+### Evidence
 
+- TLS Client Hello
+- TLS Version 1.2
+- Multiple Cipher Suites
+- Server Name Indication (SNI)
 
-\# Finding 2: DNS Response
+---
 
+# Packet Flow Summary
 
+The captured traffic followed the expected communication process for a secure HTTPS connection:
 
-\*\*Protocol:\*\* DNS
+1. DNS resolved the domain name.
+2. TCP established a reliable connection.
+3. TLS negotiated encryption.
+4. HTTPS application data was exchanged securely.
 
+---
 
+# Key Takeaways
 
-The DNS server responded with multiple IPv4 addresses for `www.google.com`.
+- DNS translates domain names into IP addresses.
+- TCP provides reliable communication through the three-way handshake.
+- TLS encrypts data transmitted over HTTPS.
+- Wireshark allows detailed inspection of network protocols and packet headers.
+- Modern HTTPS traffic protects application data using encryption, limiting visibility after the TLS handshake.
 
+---
 
+# Skills Demonstrated
 
-\*\*Observation\*\*
+- Packet capture using Wireshark
+- DNS traffic analysis
+- TCP handshake analysis
+- TLS handshake inspection
+- Packet filtering
+- Network protocol analysis
+- Documentation of technical findings
 
+---
 
+# Conclusion
 
-Google returns multiple IP addresses for redundancy and load balancing.
-
-
-
-\---
-
-
-
-\# Finding 3: TLS Client Hello
-
-
-
-\*\*Protocol:\*\* TLS
-
-
-
-A TLS Client Hello packet was captured during the establishment of a secure HTTPS connection.
-
-
-
-The packet included:
-
-
-
-\- TLS Version
-
-\- Cipher Suites
-
-\- Supported Groups
-
-\- Server Name Indication (SNI)
-
-\- JA3 Fingerprint
-
-
-
-\*\*Why it matters\*\*
-
-
-
-The Client Hello is the first step in negotiating an encrypted connection between a client and a server.
-
-
-
-\---
-
-
-
-\# Finding 4: TCP SYN Packet
-
-
-
-\*\*Protocol:\*\* TCP
-
-
-
-A TCP SYN packet was captured while initiating an HTTPS connection.
-
-
-
-\*\*Observation\*\*
-
-
-
-The SYN packet begins the TCP three-way handshake used to establish a reliable connection before application data is transmitted.
-
-
-
-\---
-
-
-
-\# Key Skills Demonstrated
-
-
-
-\- Packet Analysis
-
-\- DNS Investigation
-
-\- TCP/IP Fundamentals
-
-\- TLS Handshake Analysis
-
-\- Network Troubleshooting
-
-\- Security Documentation
-
-\- Wireshark Packet Inspection
-
-
-
-\---
-
-
-## Lessons Learned
-
-
-
-\- Learned how to filter traffic using Wireshark display filters.
-
-\- Identified the role of DNS in name resolution.
-
-\- Examined the TCP three-way handshake used to establish reliable connections.
-
-\- Observed how TLS negotiates encryption before transmitting application data.
-
-\- Improved familiarity with packet structure and protocol analysis.
-
-
-
-\---
-
-
-
-\# Conclusion
-
-
-
-This lab demonstrates a practical understanding of how modern network communications function. Capturing and analyzing DNS, TCP, and TLS traffic provides foundational knowledge required for Security Operations Center (SOC) analysis, incident response, and network troubleshooting.
-
+This lab demonstrated the complete process of establishing a secure HTTPS connection, beginning with DNS name resolution, followed by TCP session establishment and TLS encryption negotiation. The exercise strengthened practical skills in packet analysis and improved understanding of how common network protocols interact during normal web browsing.
